@@ -1,0 +1,20 @@
+{
+  "name": "secgin/akbank-vpos",
+  "description": "Akbank Sanal Pos Entegrasyon Kitaplığı",
+  "license": "MIT",
+  "autoload": {
+    "psr-4": {
+      "YG\\AkbankVPos\\": "src/"
+    }
+  },
+  "authors": [
+    {
+      "name": "Secgin"
+    }
+  ],
+  "require": {
+    "ext-curl": "*",
+    "ext-simplexml": "*",
+    "ext-json": "*"
+  }
+}
