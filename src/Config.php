@@ -9,7 +9,7 @@ use http\Encoding\Stream;
  * @method Config username(string $username)
  * @method Config password(string $password)
  * @method Config storeKey(string $storeKey)
- * @method Config successUrl(string $successUrl)
+ * @method Config okUrl(string $okUrl)
  * @method Config failUrl(string $failUrl)
  * @method Config activeTestMode()
  */
@@ -22,7 +22,7 @@ class Config implements Abstracts\Config
         'username',
         'password',
         'storeKey',
-        'successUrl',
+        'okUrl',
         'failUrl'
     ];
 
@@ -53,6 +53,7 @@ class Config implements Abstracts\Config
         if ($name == 'activeTestMode')
         {
             $this->set('testMode', true);
+            $this->loadTestService();
             return $this;
         }
 
@@ -69,6 +70,15 @@ class Config implements Abstracts\Config
     {
         $serviceUrl = 'https://www.sanalakpos.com/fim/api';
         $threeDServiceUrl = 'https://www.sanalakpos.com/fim/est3Dgate';
+
+        $this->set('serviceUrl', $serviceUrl);
+        $this->set('threeDServiceUrl', $threeDServiceUrl);
+    }
+
+    private function loadTestService()
+    {
+        $serviceUrl = 'https://entegrasyon.asseco-see.com.tr/fim/api';
+        $threeDServiceUrl = 'https://entegrasyon.asseco-see.com.tr/fim/est3Dgate';
 
         $this->set('serviceUrl', $serviceUrl);
         $this->set('threeDServiceUrl', $threeDServiceUrl);

@@ -2,19 +2,15 @@
 
 namespace YG\AkbankVPos\Abstracts\ThreeD;
 
-interface ThreeDSecureVerify
+interface Sale
 {
-    public function isHashValid(): bool;
-
-    public function isAuthenticationSuccessful();
-
-    public function getClientId(): string;
-
-    public function getOrderId(): string;
-
     public function getAmount(): float;
 
+    public function getInstallment(): ?int;
+
     public function getCurrency(): string;
+
+    public function getOrderId(): string;
 
     public function getXid(): string;
 
@@ -24,4 +20,5 @@ interface ThreeDSecureVerify
 
     public function getMd(): string;
 
+    public function getIpAddress(): string;
 }

@@ -6,7 +6,11 @@ use YG\AkbankVPos\Abstracts\AbstractHandler;
 use YG\AkbankVPos\Abstracts\Config;
 use YG\AkbankVPos\Abstracts\HttpClient;
 use YG\AkbankVPos\Abstracts\Response;
+use YG\AkbankVPos\Abstracts\ThreeD\ThreeDSecureParameter;
+use YG\AkbankVPos\Abstracts\ThreeD\ThreeDSecureVerify;
 use YG\AkbankVPos\Abstracts\VPosClient;
+use YG\AkbankVPos\ThreeD\SaleHandler;
+
 class VPos implements VPosClient
 {
     private Config $config;
@@ -14,15 +18,7 @@ class VPos implements VPosClient
     private HttpClient $httpClient;
 
     private array $requestClasses = [
-        'threeDSecureControl' => EnrollmentControlHandler::class,
-        'sale' => SaleHandler::class,
-        'cancel' => CancelHandler::class,
-        'refund' => RefundHandler::class,
-        'revers' => ReversHandler::class,
-        'settlementDetail' => SettlementDetailHandler::class,
-        'settlement' => SettlementHandler::class,
-        'search' => SearchHandler::class,
-        'succeededOpenBatchTransactions' => SucceededOpenBatchTransactionsHandler::class
+        'sale' => SaleHandler::class
     ];
 
     public function __construct(Config $config)
@@ -37,6 +33,22 @@ class VPos implements VPosClient
             return $this->handle($name, $arguments[0] ?? null);
 
         throw new \Exception('Method not found');
+    }
+
+    public function createThreeDParameter(float $amount, string $rnd): ThreeDSecureParameter
+    {
+        return \YG\AkbankVPos\ThreeD\ThreeDSecureParameter::create(
+            $this->config->get('clientId'),
+            $this->config->get('storeKey'),
+            $amount,
+            $this->config->get('okUrl'),
+            $this->config->get('failUrl'),
+            $rnd);
+    }
+
+    public function threeDSecureVerify(array $data): ThreeDSecureVerify
+    {
+        return \YG\AkbankVPos\ThreeD\ThreeDSecureVerify::create($data, $this->config->get('storeKey'));
     }
 
     #region Handler Methods
