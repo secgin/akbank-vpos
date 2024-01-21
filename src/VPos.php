@@ -2,6 +2,7 @@
 
 namespace YG\AkbankVPos;
 
+use Exception;
 use YG\AkbankVPos\Abstracts\AbstractHandler;
 use YG\AkbankVPos\Abstracts\Config;
 use YG\AkbankVPos\Abstracts\HttpClient;
@@ -27,14 +28,6 @@ class VPos implements VPosClient
         $this->httpClient = new CurlHttpClient();
     }
 
-    public function __call($name, $arguments)
-    {
-        if ($this->hasRequestClass($name))
-            return $this->handle($name, $arguments[0] ?? null);
-
-        throw new \Exception('Method not found');
-    }
-
     public function createThreeDParameter(float  $amount, string $rnd, string $okUrl,
                                           string $failUrl): ThreeDSecureParameter
     {
@@ -50,6 +43,11 @@ class VPos implements VPosClient
     public function threeDSecureVerify(array $data): ThreeDSecureVerify
     {
         return \YG\AkbankVPos\ThreeD\ThreeDSecureVerify::create($data, $this->config->get('storeKey'));
+    }
+
+    public function getConfig(): Config
+    {
+        return $this->config;
     }
 
     #region Handler Methods
@@ -75,6 +73,19 @@ class VPos implements VPosClient
     private function handle(string $requestName, $request): Response
     {
         return $this->getRequestHandler($requestName)->handle($request);
+    }
+    #endregion
+
+    #region Magic Methods
+    /**
+     * @throws Exception
+     */
+    public function __call($name, $arguments)
+    {
+        if ($this->hasRequestClass($name))
+            return $this->handle($name, $arguments[0] ?? null);
+
+        throw new Exception('Method not found');
     }
     #endregion
 }

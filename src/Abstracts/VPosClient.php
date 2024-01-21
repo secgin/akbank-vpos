@@ -17,4 +17,6 @@ interface VPosClient
                                           string $failUrl): ThreeDSecureParameter;
 
     public function threeDSecureVerify(array $data): ThreeDSecureVerify;
+
+    public function getConfig(): Config;
 }
