@@ -35,14 +35,15 @@ class VPos implements VPosClient
         throw new \Exception('Method not found');
     }
 
-    public function createThreeDParameter(float $amount, string $rnd): ThreeDSecureParameter
+    public function createThreeDParameter(float  $amount, string $rnd, string $okUrl,
+                                          string $failUrl): ThreeDSecureParameter
     {
         return \YG\AkbankVPos\ThreeD\ThreeDSecureParameter::create(
             $this->config->get('clientId'),
             $this->config->get('storeKey'),
             $amount,
-            $this->config->get('okUrl'),
-            $this->config->get('failUrl'),
+            $okUrl,
+            $failUrl,
             $rnd);
     }
 

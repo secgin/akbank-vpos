@@ -9,8 +9,6 @@ use http\Encoding\Stream;
  * @method Config username(string $username)
  * @method Config password(string $password)
  * @method Config storeKey(string $storeKey)
- * @method Config okUrl(string $okUrl)
- * @method Config failUrl(string $failUrl)
  * @method Config activeTestMode()
  */
 class Config implements Abstracts\Config
@@ -21,9 +19,7 @@ class Config implements Abstracts\Config
         'clientId',
         'username',
         'password',
-        'storeKey',
-        'okUrl',
-        'failUrl'
+        'storeKey'
     ];
 
     private function __construct(array $config)

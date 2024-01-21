@@ -13,7 +13,8 @@ use YG\AkbankVPos\Abstracts\ThreeD\ThreeDSecureVerify;
  */
 interface VPosClient
 {
-    public function createThreeDParameter(float $amount, string $rnd) : ThreeDSecureParameter;
+    public function createThreeDParameter(float  $amount, string $rnd, string $okUrl,
+                                          string $failUrl): ThreeDSecureParameter;
 
     public function threeDSecureVerify(array $data): ThreeDSecureVerify;
 }

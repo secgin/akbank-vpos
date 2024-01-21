@@ -23,7 +23,6 @@ class SaleResult extends AbstractResponse implements \YG\AkbankVPos\Abstracts\Th
         if ($this->isSuccess())
         {
             $result = $this->getResult();
-
             $this->response = $result['Response'] ?? '';
 
             $orderId = $result['OrderId'] ?? '';
@@ -34,7 +33,9 @@ class SaleResult extends AbstractResponse implements \YG\AkbankVPos\Abstracts\Th
             if (is_string($transId))
                 $this->transId = $transId;
 
-            $this->errorMessage = $result['ErrMsg'] ?? null;
+            $errMsg = $result['ErrMsg'] ?? null;
+            if (is_string($errMsg))
+                $this->errorMessage = $errMsg;
         }
     }
 
@@ -48,7 +49,7 @@ class SaleResult extends AbstractResponse implements \YG\AkbankVPos\Abstracts\Th
         return $this->orderId;
     }
 
-    public function getTransIs(): string
+    public function getTransId(): string
     {
         return $this->transId;
     }

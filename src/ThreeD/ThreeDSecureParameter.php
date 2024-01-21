@@ -18,7 +18,6 @@ final class ThreeDSecureParameter implements ThreeDSecureControlInterface
     private ?string
         $oid = null,
         $description = null,
-        $xid = null,
         $lang = 'tr',
         $currency = '949',
         $email = null,

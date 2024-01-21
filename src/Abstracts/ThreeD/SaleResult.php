@@ -6,7 +6,7 @@ interface SaleResult
 {
     public function getOrderId(): string;
 
-    public function getTransIs(): string;
+    public function getTransId(): string;
 
     public function isPaymentSuccess(): bool;
 }
