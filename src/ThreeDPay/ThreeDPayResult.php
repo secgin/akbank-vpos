@@ -79,6 +79,11 @@ final class ThreeDPayResult implements \YG\AkbankVPos\Abstracts\ThreeDPay\ThreeD
         return $this->data['oid'] ?? '';
     }
 
+    public function getAmount(): ?float
+    {
+        return $this->data['amount'] ?? null;
+    }
+
     public function getErrMsg(): string
     {
         return $this->data['ErrMsg'] ?? '';

@@ -20,5 +20,7 @@ interface ThreeDPayResult
 
     public function getOrderId(): string;
 
+    public function getAmount(): ?float;
+
     public function getErrMsg(): string;
 }
