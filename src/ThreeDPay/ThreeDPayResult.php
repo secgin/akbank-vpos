@@ -74,6 +74,11 @@ final class ThreeDPayResult implements \YG\AkbankVPos\Abstracts\ThreeDPay\ThreeD
         return $this->data['TransId'] ?? '';
     }
 
+    public function getOrderId(): string
+    {
+        return $this->data['oid'] ?? '';
+    }
+
     public function getErrMsg(): string
     {
         return $this->data['ErrMsg'] ?? '';

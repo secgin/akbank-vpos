@@ -18,5 +18,7 @@ interface ThreeDPayResult
 
     public function getTransId(): string;
 
+    public function getOrderId(): string;
+
     public function getErrMsg(): string;
 }
