@@ -9,6 +9,8 @@ use YG\AkbankVPos\Abstracts\HttpClient;
 use YG\AkbankVPos\Abstracts\Response;
 use YG\AkbankVPos\Abstracts\ThreeD\ThreeDSecureParameter;
 use YG\AkbankVPos\Abstracts\ThreeD\ThreeDSecureVerify;
+use YG\AkbankVPos\Abstracts\ThreeDPay\ThreeDPayResult;
+use YG\AkbankVPos\Abstracts\ThreeDPay\ThreeDPaySecureParameter;
 use YG\AkbankVPos\Abstracts\VPosClient;
 use YG\AkbankVPos\ThreeD\SaleHandler;
 
@@ -40,9 +42,26 @@ class VPos implements VPosClient
             $rnd);
     }
 
+    public function createThreeDPayParameter(float  $amount, string $rnd, string $okUrl,
+                                          string $failUrl): ThreeDPaySecureParameter
+    {
+        return \YG\AkbankVPos\ThreeDPay\ThreeDPaySecureParameter::create(
+            $this->config->get('clientId'),
+            $this->config->get('storeKey'),
+            $amount,
+            $okUrl,
+            $failUrl,
+            $rnd);
+    }
+
     public function threeDSecureVerify(array $data): ThreeDSecureVerify
     {
         return \YG\AkbankVPos\ThreeD\ThreeDSecureVerify::create($data, $this->config->get('storeKey'));
+    }
+
+    public function threeDPayVerify(array $data): ThreeDPayResult
+    {
+        return \YG\AkbankVPos\ThreeDPay\ThreeDPayResult::create($data, $this->config->get('storeKey'));
     }
 
     public function getConfig(): Config
