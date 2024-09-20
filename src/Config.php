@@ -74,7 +74,7 @@ class Config implements Abstracts\Config
     private function loadTestService()
     {
         $serviceUrl = 'https://entegrasyon.asseco-see.com.tr/fim/api';
-        $threeDServiceUrl = 'https://entegrasyon.asseco-see.com.tr/fim/est3Dgate';
+        $threeDServiceUrl = 'https://entegrasyon.asseco-see.com.tr/fim/est3dgate';
 
         $this->set('serviceUrl', $serviceUrl);
         $this->set('threeDServiceUrl', $threeDServiceUrl);

@@ -21,22 +21,30 @@ final class ThreeDPayResult implements \YG\AkbankVPos\Abstracts\ThreeDPay\ThreeD
 
     public function isHashValid(): bool
     {
-        $hashParams = $_POST["HASHPARAMS"] ?? null;
-        $hashParamsVal = $_POST["HASHPARAMSVAL"] ?? null;
-        $hash = $_POST["HASH"] ?? null;
+        $postParams = array();
+        foreach ($_POST as $key => $value)
+            $postParams[] = $key;
 
-        if ($hashParams == '' or $hashParamsVal == '' or $hash == '')
-            return false;
+        natcasesort($postParams);
 
-        $hashVal = join('',
-            array_map(fn($item) => $this->data[$item] ?? '', explode(':', $hashParams)));
+        $hashVal = "";
+        foreach ($postParams as $param){
+            $paramValue = $_POST[$param];
+            $escapedParamValue = str_replace("|", "\\|", str_replace("\\", "\\\\", $paramValue));
 
-        if ($hashVal != $hashParamsVal)
-            return false;
+            $lowerParam = strtolower($param);
+            if($lowerParam != "hash" && $lowerParam != "encoding" )
+                $hashVal = $hashVal . $escapedParamValue . "|";
+        }
 
-        $newHash = base64_encode(pack('H*', sha1($hashVal . $this->storeKey)));
+        $escapedStoreKey = str_replace("|", "\\|", str_replace("\\", "\\\\",  $this->storeKey));
+        $hashVal = $hashVal . $escapedStoreKey;
 
-        return $newHash == $hash;
+        $calculatedHashValue = hash('sha512', $hashVal);
+        $actualHash = base64_encode (pack('H*',$calculatedHashValue));
+
+        $retrievedHash = $_POST["HASH"];
+        return $retrievedHash == $actualHash;
     }
 
     public function isAuthenticationSuccessful(): bool

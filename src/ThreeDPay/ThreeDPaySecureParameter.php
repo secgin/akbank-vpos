@@ -13,7 +13,13 @@ class ThreeDPaySecureParameter implements ThreeDPaySecureParameterInterface
         $failUrl,
         $rnd,
         $storeType = '3d_pay',
-        $authType = 'Auth';
+        $authType = 'Auth',
+        $hasAlgorithm = 'ver3';
+
+    private string $cardNumber;
+    private string $expiryDateYear;
+    private string $expiryDateMonth;
+    private string $cvv;
 
     private float $amount;
 
@@ -48,6 +54,15 @@ class ThreeDPaySecureParameter implements ThreeDPaySecureParameterInterface
     public function setOrderId(string $orderId): self
     {
         $this->oid = $orderId;
+        return $this;
+    }
+
+    public function setCardInfo(string $cardNumber, string $expiryDateYear, string $expiryDateMonth, string $cvv): self
+    {
+        $this->cardNumber = $cardNumber;
+        $this->expiryDateYear = $expiryDateYear;
+        $this->expiryDateMonth = $expiryDateMonth;
+        $this->cvv = $cvv;
         return $this;
     }
 
@@ -96,29 +111,29 @@ class ThreeDPaySecureParameter implements ThreeDPaySecureParameterInterface
 
     public function getParameter(): array
     {
-        $hashString = $this->clientId . ($this->oid ?? '') . $this->amount . $this->okUrl . $this->failUrl .
-            $this->authType . $this->rnd . $this->storeKey;
+        $parameters = $this->createParameters();
+        $parameters['hash'] = $this->createHash($parameters);
+        return $parameters;
+    }
 
+    public function createParameters(): array
+    {
         $parameters = [
             'clientid' => $this->clientId,
-            'amount' => $this->amount,
-            'okUrl' => $this->okUrl,
-            'failUrl' => $this->failUrl,
             'storetype' => $this->storeType,
             'islemtipi' => $this->authType,
+            'amount' => $this->amount,
+            'currency' => $this->currency,
+            'oid' => $this->oid,
+            'okUrl' => $this->okUrl,
+            'failUrl' => $this->failUrl,
+            'lang' => $this->lang,
             'rnd' => $this->rnd,
-            'hash' => base64_encode(pack('H*', sha1($hashString))),
-            'currency' => $this->currency
+            'hashAlgorithm' => $this->hasAlgorithm,
         ];
-
-        if ($this->oid != '')
-            $parameters['oid'] = $this->oid;
 
         if ($this->description != '')
             $parameters['description'] = $this->description;
-
-        if ($this->lang != '')
-            $parameters['lang'] = $this->lang;
 
         if ($this->email != '')
             $parameters['email'] = $this->email;
@@ -127,5 +142,32 @@ class ThreeDPaySecureParameter implements ThreeDPaySecureParameterInterface
             $parameters['userid'] = $this->userId;
 
         return $parameters;
+    }
+
+    public function createHash(array $parameters): string
+    {
+        $parameters = array_merge($parameters, [
+            'pan' => $this->cardNumber,
+            'Ecom_Payment_Card_ExpDate_Year' => $this->expiryDateYear,
+            'Ecom_Payment_Card_ExpDate_Month' => $this->expiryDateMonth,
+            'cv2' => $this->cvv
+        ]);
+
+        $keys = array_keys($parameters);
+        natcasesort($keys);
+
+        $data = [];
+        foreach ($keys as $key)
+            $data[$key] = $parameters[$key];
+
+        $data['storeKey'] = $this->storeKey;
+
+        foreach ($data as $index => $value)
+            $data[$index] = str_replace("|", "\\|", str_replace("\\", "\\\\", $value));
+
+        $hashVal = join('|', $data);
+
+        $calculatedHashValue = hash('sha512', $hashVal);
+        return base64_encode(pack('H*', $calculatedHashValue));
     }
 }

@@ -101,15 +101,7 @@ final class ThreeDSecureParameter implements ThreeDSecureControlInterface
             'failUrl' => $this->failUrl,
             'storetype' => '3d',
             'rnd' => $this->rnd,
-            'hash' => base64_encode(sha1(
-                $this->clientId .
-                ($this->oid ?? '') .
-                $this->amount .
-                $this->okUrl .
-                $this->failUrl .
-                $this->rnd .
-                $this->storeKey,
-                "ISO-8859-9")),
+            'hash' => $this->createHash(),
             'currency' => $this->currency
         ];
 
@@ -129,5 +121,26 @@ final class ThreeDSecureParameter implements ThreeDSecureControlInterface
             $parameters['userid'] = $this->userId;
 
         return $parameters;
+    }
+
+    public function createHash(): string
+    {
+        $data = [
+            $this->clientId,
+            ($this->oid ?? ''),
+            $this->amount,
+            $this->okUrl,
+            $this->failUrl,
+            $this->rnd,
+            $this->storeKey
+        ];
+        foreach ($data as $index => $value)
+            $data[$index] = str_replace("|", "\\|", str_replace("\\", "\\\\", $value));
+
+        natcasesort($data);
+        $hashVal = join('|', $data);
+
+        $calculatedHashValue = hash('sha512', $hashVal);
+        return base64_encode(pack('H*', $calculatedHashValue));
     }
 }
